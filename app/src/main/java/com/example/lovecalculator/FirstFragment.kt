@@ -7,14 +7,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.lovecalculator.databinding.FragmentFirstBinding
+import com.example.lovecalculator.remote.LoveModel
+import com.example.lovecalculator.remote.LoveService
+import com.example.lovecalculator.viewmodel.LoveViewModel
 import retrofit2.Call
 import retrofit2.Response
 
 class FirstFragment : Fragment() {
 
     private lateinit var binding: FragmentFirstBinding
+    private val viewModel= LoveViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,24 +38,12 @@ class FirstFragment : Fragment() {
     private fun initListener() {
         with(binding) {
             btnCalculate.setOnClickListener {
-                LoveService().api.calculatePercentage(
+                viewModel.getLiveLove(
                     firstName = firstEt.text.toString(),
                     secondName = secondEt.text.toString()
-                ).enqueue(object : retrofit2.Callback<LoveModel> {
-                    override fun onResponse(call: Call<LoveModel>, response: Response<LoveModel>) {
-                        if (response.isSuccessful) {
-                            Log.e("ololo", "onResponse: ${response.body()}")
-                            findNavController().navigate(
-                                R.id.resultFragment,
-                                bundleOf("result" to response.body())
-                            )
-                        }
-                    }
-
-                    override fun onFailure(call: Call<LoveModel>, t: Throwable) {
-                        Log.e("ololo", "onFailure: ${t.message}")
-                    }
-
+                ).observe(viewLifecycleOwner, Observer {
+                    Log.d("ololo", "initListener: $it")
+                    findNavController().navigate(R.id.resultFragment, bundleOf("key" to it))
                 })
             }
         }

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.lovecalculator.databinding.FragmentResultBinding
+import com.example.lovecalculator.remote.LoveModel
 
 class ResultFragment : Fragment() {
 
@@ -26,7 +27,7 @@ class ResultFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         with(binding){
-            val result = arguments?.getSerializable("result") as LoveModel
+            val result = arguments?.getSerializable("key") as LoveModel
             etYou.text = result.firstName
             etMe.text = result.secondName
             tvPercentage.text = result.percentage + "%"
